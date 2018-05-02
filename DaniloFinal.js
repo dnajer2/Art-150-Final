@@ -23,7 +23,9 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+ // createCanvas(windowWidth, windowHeight);
+    createCanvas(1366, 768);
+
   background(0);
   fill(255);
   textSize(46);
