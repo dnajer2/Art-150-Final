@@ -1,14 +1,24 @@
 var button;
 
 var img=[];
+var bg;
 var sound=[];
 var pg=2;
+var locationBreakdown;
 
 var cap;
 var loc;
 var des;
 
 function preload() {
+
+  var url =  "https://watson-api-explorer.mybluemix.net/natural-language-understanding/api/v1/analyze?version=2017-02-27&url=https%3A%2F%2Fpastebin.com%2FRe03HnsN&features=concepts%2Cemotion%2Csentiment&return_analyzed_text=false&clean=true&fallback_to_raw=true&concepts.limit=8&emotion.document=true&entities.limit=50&entities.mentions=false&entities.emotion=false&entities.sentiment=false&keywords.limit=50&keywords.emotion=false&keywords.sentiment=false&relations.model=en-news&semantic_roles.limit=50&semantic_roles.entities=false&semantic_roles.keywords=false&sentiment.document=true";  //Change the api key to your api key from openweathermap.org
+  httpGet(url, 'json', false, function(response) {
+    locationBreakdown = response;
+  }
+  );
+
+
 
   /** Load all text files **/
   cap = loadStrings('assets/cv.txt');
@@ -20,14 +30,16 @@ function preload() {
   for (var i = 0; i< 48; i++) {
     img[i] = loadImage("assets/a" + i + ".jpg");
   }
+
+  bg = loadImage("assets/x1.jpg");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(0);
   fill(255);
-  textSize(46);
-  text("April in 2018", width/2, height/2);
+  textSize(56);
+  text("April in 2018", width/4, height/2);
 
 
   //set sound format
@@ -111,14 +123,18 @@ function newPage() {
   }
 
   background(0);
+  bg.resize(width/3, 0);
+  image(bg, 30+80, 35+ 90);
   //most of the images are in landscape mode, so resize(width/2, 0) works well, but for the portrait images,
   //you need to use resize(0, height/2 so that it will fit)
   if (pg==5 || pg==7 || pg==12 || pg==20 || pg==21 || pg==29 || pg==33|| pg==40) {  
-    img[pg].resize(0, height/2);
+
+    img[pg].resize(0, height/3);
+    image(img[pg], 30+ 3*width/15, 50+height/4.5);
   } else {
-    img[pg].resize(width/2, 0);
+    img[pg].resize(width/3, 0);
+    image(img[pg], 30+ width/15, 40+height/4.5);
   }
-  image(img[pg], width/15, height/4.5);
 
   fill(255);
 
@@ -127,7 +143,7 @@ function newPage() {
   textSize(16);
   textFont('Calibri');
   textStyle(NORMAL);
-  text(des[pg], 2.5* width/4, height/3, width/3, height);
+  text(des[pg], 2* width/4, 15+height/3, width/3, height);
 
   //Write CV detection line here
   textSize(16);
@@ -138,8 +154,9 @@ function newPage() {
   //Write location image here
   textSize(16);
   textFont('Calibri');
-  textStyle(NORMAL);
-  text(loc[pg], width/15, 1.5*height/8, width/2, height/2);
+  // textStyle(NORMAL);
+  //text(loc[pg], width/15, 1.5*height/8, width/2, height/2);
+  text(loc[pg], 2* width/4, height/4, width/3, height);
 }
 
 /***********************************************************************************
@@ -153,8 +170,25 @@ function homePg() {
   //if (sound[pg].isPlaying()) {
   //  sound[pg].stop();
   //}
-  textSize(42);
-  text("April in 2018", width/2, height/2);
+  //textSize(56);
+  //text("April in 2018", width/4, height/2);
+  
+  fill(255);
+    textSize(38);
+  text("********OFFICIAL LOCATION POWER RANKINGS********", width/8, height/8);
+  textSize(24);
+  text("#1. "+locationBreakdown.concepts[0].text + "    relevance: "+ locationBreakdown.concepts[0].relevance, width/4, 2*height/8);
+  text("#2. "+locationBreakdown.concepts[1].text+ "    relevance: "+ locationBreakdown.concepts[1].relevance, width/4, 3*height/8);
+  text("#3. "+locationBreakdown.concepts[2].text+ "    relevance: "+ locationBreakdown.concepts[2].relevance, width/4, 4*height/8);
+  text("********POWER GAP********", width/4, 5*height/8);
+  text("#6. "+locationBreakdown.concepts[7].text+ "    relevance: "+ locationBreakdown.concepts[7].relevance, width/4, 6*height/8);
+
+  textSize(16);
+//  text("Sentimental experience detected : "+locationBreakdown.sentiment.document.label + " Probability: "locationBreakdown.sentiment.document.score, width/4, 7*height/8);
+  text("Emotions calculated:{ / sadness ("+locationBreakdown.emotion.document.emotion.sadness + ") / joy ("+locationBreakdown.emotion.document.emotion.joy+") / fear (" + locationBreakdown.emotion.document.emotion.fear + ") / disgust ("+ locationBreakdown.emotion.document.emotion.disgust + ") / fear ("+ locationBreakdown.emotion.document.emotion.fear + ") }", width/8, height-40);
+
+  
+  
   pg=1;
 }
 
